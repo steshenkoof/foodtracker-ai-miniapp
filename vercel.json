@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "name": "foodtracker-ai-pro",
+  "builds": [
+    {
+      "src": "server-cal-ai.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/server-cal-ai.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "server-cal-ai.js": {
+      "maxDuration": 30
+    }
+  }
+}

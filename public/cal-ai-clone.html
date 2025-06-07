@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="title">FoodTracker AI Pro - Cal AI Clone</title>
+    <link rel="stylesheet" href="cal-ai-styles.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Multi-language support -->
+    <script src="languages/translations.js"></script>
+  </head>
+  <body>
+    <!-- 🎭 Enhanced Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+      <div class="loading-animation">
+        <div class="loading-logo">🧠</div>
+        <div class="loading-dots">
+          <div class="loading-dot"></div>
+          <div class="loading-dot"></div>
+          <div class="loading-dot"></div>
+        </div>
+        <div class="loading-text">FoodTracker AI Pro</div>
+        <div class="loading-subtitle">
+          🚀 Initializing AI nutrition analysis...
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-container">
+        <div class="nav-brand">
+          <i class="fas fa-brain"></i>
+          <span>FoodTracker AI Pro</span>
+        </div>
+        <div class="nav-menu" id="navMenu">
+          <a href="#dashboard" class="nav-link active" data-section="dashboard">
+            <i class="fas fa-chart-line"></i>
+            <span data-i18n="dashboard">Dashboard</span>
+          </a>
+          <a href="#camera" class="nav-link" data-section="camera">
+            <i class="fas fa-camera"></i>
+            <span data-i18n="aiAnalysis">Analyze Food</span>
+          </a>
+          <a href="#history" class="nav-link" data-section="history">
+            <i class="fas fa-history"></i>
+            <span data-i18n="nutrition">History</span>
+          </a>
+          <a href="#goals" class="nav-link" data-section="goals">
+            <i class="fas fa-target"></i> <span data-i18n="goals">Goals</span>
+          </a>
+          <a href="#profile" class="nav-link" data-section="profile">
+            <i class="fas fa-user"></i>
+            <span data-i18n="settings">Profile</span>
+          </a>
+        </div>
+        <div class="nav-actions">
+          <!-- Language Selector -->
+          <div class="language-selector">
+            <select id="languageSelector" onchange="changeLanguage(this.value)">
+              <option value="en">🇺🇸 English</option>
+              <option value="ru">🇷🇺 Русский</option>
+              <option value="de">🇩🇪 Deutsch</option>
+              <option value="fr">🇫🇷 Français</option>
+            </select>
+          </div>
+          <button class="theme-toggle" id="themeToggle">
+            <i class="fas fa-moon"></i>
+          </button>
+          <button class="logout-btn" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal active">
+      <div class="modal-content auth-modal">
+        <div class="auth-header">
+          <div class="app-logo">
+            <i class="fas fa-brain"></i>
+            <h1>FoodTracker AI Pro</h1>
+            <p>Track your nutrition with AI precision</p>
+          </div>
+          <div class="auth-tabs">
+            <button class="auth-tab active" data-tab="login" data-i18n="login">
+              Sign In
+            </button>
+            <button class="auth-tab" data-tab="register" data-i18n="register">
+              Sign Up
+            </button>
+          </div>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form active">
+          <div class="form-group">
+            <i class="fas fa-user"></i>
+            <input
+              type="text"
+              id="loginUsername"
+              data-i18n="usernameOrEmail"
+              placeholder="Username or Email"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <i class="fas fa-lock"></i>
+            <input
+              type="password"
+              id="loginPassword"
+              data-i18n="password"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-sign-in-alt"></i>
+            <span data-i18n="loginButton">Sign In</span>
+          </button>
+          <div class="auth-footer">
+            <p data-i18n="welcomeBack">
+              Join 5M+ users tracking with AI precision
+            </p>
+          </div>
+        </form>
+
+        <!-- Register Form -->
+        <form id="registerForm" class="auth-form">
+          <div class="form-group">
+            <i class="fas fa-user"></i>
+            <input
+              type="text"
+              id="registerUsername"
+              data-i18n="username"
+              placeholder="Username"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <i class="fas fa-envelope"></i>
+            <input
+              type="email"
+              id="registerEmail"
+              data-i18n="email"
+              placeholder="Email"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <i class="fas fa-lock"></i>
+            <input
+              type="password"
+              id="registerPassword"
+              data-i18n="passwordHint"
+              placeholder="Password (6+ chars)"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <i class="fas fa-lock"></i>
+            <input
+              type="password"
+              id="confirmPassword"
+              data-i18n="confirmPassword"
+              placeholder="Confirm Password"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i>
+            <span data-i18n="registerButton">Create Account</span>
+          </button>
+          <div class="auth-footer">
+            <p data-i18n="createAccount">
+              Start your AI-powered nutrition journey
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="appContainer" class="app-container hidden">
+      <!-- Dashboard Section -->
+      <section id="dashboard" class="app-section active">
+        <div class="section-header">
+          <h2 data-i18n="todayNutrition">Today's Nutrition Dashboard</h2>
+          <div class="date-selector">
+            <input type="date" id="dateSelector" value="" />
+            <button class="btn btn-secondary" id="todayBtn" data-i18n="today">
+              Today
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+          <div class="stat-card calories">
+            <div class="stat-icon"><i class="fas fa-fire"></i></div>
+            <div class="stat-content">
+              <div class="stat-value" id="caloriesValue">0</div>
+              <div class="stat-label" data-i18n="calories">Calories</div>
+              <div class="stat-goal">/ <span id="caloriesGoal">2000</span></div>
+            </div>
+            <div class="stat-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" id="caloriesProgress"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card protein">
+            <div class="stat-icon"><i class="fas fa-dumbbell"></i></div>
+            <div class="stat-content">
+              <div class="stat-value" id="proteinValue">0</div>
+              <div class="stat-label" data-i18n="protein">Protein (g)</div>
+              <div class="stat-goal">/ <span id="proteinGoal">150</span></div>
+            </div>
+            <div class="stat-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" id="proteinProgress"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card carbs">
+            <div class="stat-icon"><i class="fas fa-bread-slice"></i></div>
+            <div class="stat-content">
+              <div class="stat-value" id="carbsValue">0</div>
+              <div class="stat-label" data-i18n="carbs">Carbs (g)</div>
+              <div class="stat-goal">/ <span id="carbsGoal">250</span></div>
+            </div>
+            <div class="stat-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" id="carbsProgress"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card fat">
+            <div class="stat-icon"><i class="fas fa-tint"></i></div>
+            <div class="stat-content">
+              <div class="stat-value" id="fatValue">0</div>
+              <div class="stat-label" data-i18n="fat">Fat (g)</div>
+              <div class="stat-goal">/ <span id="fatGoal">67</span></div>
+            </div>
+            <div class="stat-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" id="fatProgress"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <button class="action-btn camera-btn" data-section="camera">
+            <i class="fas fa-camera"></i>
+            <span>Snap Food Photo</span>
+          </button>
+          <button class="action-btn barcode-btn" id="barcodeBtn">
+            <i class="fas fa-barcode"></i>
+            <span>Scan Barcode</span>
+          </button>
+          <button class="action-btn text-btn" id="textBtn">
+            <i class="fas fa-keyboard"></i>
+            <span>Describe Food</span>
+          </button>
+        </div>
+
+        <!-- Recent Meals -->
+        <div class="recent-meals">
+          <h3>Recent Meals</h3>
+          <div class="meals-list" id="recentMealsList">
+            <!-- Meals will be populated here -->
+          </div>
+        </div>
+
+        <!-- AI Insights -->
+        <div class="ai-insights">
+          <h3><i class="fas fa-brain"></i> AI Insights</h3>
+          <div class="insights-content" id="insightsContent">
+            <div class="insight-card">
+              <i class="fas fa-lightbulb"></i>
+              <p>
+                Welcome! Start by taking a photo of your meal for AI analysis.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Camera/Analysis Section -->
+      <section id="camera" class="app-section">
+        <div class="section-header">
+          <h2>AI Food Analysis</h2>
+          <p>Snap a photo, scan barcode, or describe your food</p>
+        </div>
+
+        <!-- Analysis Methods Tabs -->
+        <div class="analysis-tabs">
+          <button class="analysis-tab active" data-method="photo">
+            <i class="fas fa-camera"></i> Photo Analysis
+          </button>
+          <button class="analysis-tab" data-method="barcode">
+            <i class="fas fa-barcode"></i> Barcode Scan
+          </button>
+          <button class="analysis-tab" data-method="text">
+            <i class="fas fa-keyboard"></i> Text Description
+          </button>
+        </div>
+
+        <!-- Photo Analysis -->
+        <div id="photoAnalysis" class="analysis-method active">
+          <div class="camera-container">
+            <div class="camera-preview" id="cameraPreview">
+              <video id="video" autoplay playsinline></video>
+              <canvas id="canvas" style="display: none"></canvas>
+              <div class="camera-overlay">
+                <div class="focus-frame"></div>
+                <div class="camera-tips">
+                  <p>💡 For best results:</p>
+                  <ul>
+                    <li>Good lighting</li>
+                    <li>Clear view of food</li>
+                    <li>Multiple angles if needed</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="camera-controls">
+              <button class="btn btn-secondary" id="startCamera">
+                <i class="fas fa-video"></i> Start Camera
+              </button>
+              <button class="btn btn-primary" id="capturePhoto" disabled>
+                <i class="fas fa-camera"></i> Capture
+              </button>
+              <input
+                type="file"
+                id="fileUpload"
+                accept="image/*"
+                style="display: none"
+              />
+              <button class="btn btn-secondary" id="uploadPhoto">
+                <i class="fas fa-upload"></i> Upload Photo
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barcode Analysis -->
+        <div id="barcodeAnalysis" class="analysis-method">
+          <div class="barcode-container">
+            <div class="barcode-input">
+              <i class="fas fa-barcode"></i>
+              <input
+                type="text"
+                id="barcodeInput"
+                placeholder="Enter or scan barcode..."
+                maxlength="13"
+              />
+              <button class="btn btn-primary" id="analyzeBarcodeBtn">
+                Analyze
+              </button>
+            </div>
+            <div class="barcode-scanner" id="barcodeScanner">
+              <p>Camera barcode scanning coming soon!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Text Analysis -->
+        <div id="textAnalysis" class="analysis-method">
+          <div class="text-container">
+            <div class="text-input-group">
+              <label for="foodDescription">Describe your food:</label>
+              <textarea
+                id="foodDescription"
+                placeholder="e.g., grilled chicken breast 200g with rice and vegetables"
+                maxlength="1000"
+              ></textarea>
+              <div class="char-counter"><span id="charCount">0</span>/1000</div>
+              <button class="btn btn-primary" id="analyzeTextBtn">
+                <i class="fas fa-brain"></i> Analyze Description
+              </button>
+            </div>
+            <div class="text-examples">
+              <h4>Examples:</h4>
+              <div class="example-pills">
+                <button class="example-pill">
+                  "Large apple with peanut butter"
+                </button>
+                <button class="example-pill">
+                  "Chicken Caesar salad, no croutons"
+                </button>
+                <button class="example-pill">
+                  "2 slices whole wheat toast with avocado"
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Analysis Results -->
+        <div id="analysisResults" class="analysis-results hidden">
+          <div class="results-header">
+            <h3><i class="fas fa-brain"></i> AI Analysis Results</h3>
+            <div class="confidence-badge" id="confidenceBadge">
+              <i class="fas fa-check-circle"></i>
+              <span id="confidenceText">95% Confidence</span>
+            </div>
+          </div>
+
+          <div class="analyzed-items" id="analyzedItems">
+            <!-- Analysis results will be populated here -->
+          </div>
+
+          <div class="nutrition-summary" id="nutritionSummary">
+            <h4>Nutrition Summary</h4>
+            <div class="summary-grid">
+              <div class="summary-item">
+                <span class="label">Calories:</span>
+                <span class="value" id="summaryCalories">0</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Protein:</span>
+                <span class="value" id="summaryProtein">0g</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Carbs:</span>
+                <span class="value" id="summaryCarbs">0g</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Fat:</span>
+                <span class="value" id="summaryFat">0g</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="results-actions">
+            <button class="btn btn-primary" id="saveMealBtn">
+              <i class="fas fa-save"></i> Save Meal
+            </button>
+            <button class="btn btn-secondary" id="correctBtn">
+              <i class="fas fa-edit"></i> Make Corrections
+            </button>
+            <button class="btn btn-secondary" id="newAnalysisBtn">
+              <i class="fas fa-plus"></i> New Analysis
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- History Section -->
+      <section id="history" class="app-section">
+        <div class="section-header">
+          <h2>Nutrition History</h2>
+          <div class="history-filters">
+            <select id="historyTimeframe">
+              <option value="7">Last 7 days</option>
+              <option value="30">Last 30 days</option>
+              <option value="90">Last 3 months</option>
+            </select>
+            <button class="btn btn-secondary" id="exportDataBtn">
+              <i class="fas fa-download"></i> Export
+            </button>
+          </div>
+        </div>
+
+        <div class="history-content">
+          <div class="history-chart">
+            <canvas id="nutritionChart"></canvas>
+          </div>
+
+          <div class="history-list" id="historyList">
+            <!-- History items will be populated here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Goals Section -->
+      <section id="goals" class="app-section">
+        <div class="section-header">
+          <h2>Nutrition Goals</h2>
+          <p>Set and track your personalized nutrition targets</p>
+        </div>
+
+        <div class="goals-content">
+          <form id="goalsForm" class="goals-form">
+            <div class="form-group">
+              <label for="caloriesGoalInput">Daily Calories Goal</label>
+              <input
+                type="number"
+                id="caloriesGoalInput"
+                min="800"
+                max="5000"
+                step="50"
+              />
+            </div>
+            <div class="form-group">
+              <label for="proteinGoalInput">Protein Goal (g)</label>
+              <input
+                type="number"
+                id="proteinGoalInput"
+                min="10"
+                max="500"
+                step="5"
+              />
+            </div>
+            <div class="form-group">
+              <label for="carbsGoalInput">Carbs Goal (g)</label>
+              <input
+                type="number"
+                id="carbsGoalInput"
+                min="50"
+                max="1000"
+                step="10"
+              />
+            </div>
+            <div class="form-group">
+              <label for="fatGoalInput">Fat Goal (g)</label>
+              <input
+                type="number"
+                id="fatGoalInput"
+                min="20"
+                max="300"
+                step="5"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save"></i> Update Goals
+            </button>
+          </form>
+
+          <div class="goals-insights">
+            <h3>Goal Insights</h3>
+            <div class="insight-cards" id="goalInsights">
+              <!-- Goal insights will be populated here -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Profile Section -->
+      <section id="profile" class="app-section">
+        <div class="section-header">
+          <h2>Profile & Settings</h2>
+        </div>
+
+        <div class="profile-content">
+          <div class="profile-stats">
+            <div class="stat">
+              <h4 id="totalAnalyses">0</h4>
+              <p>AI Analyses</p>
+            </div>
+            <div class="stat">
+              <h4 id="daysTracking">0</h4>
+              <p>Days Tracking</p>
+            </div>
+            <div class="stat">
+              <h4 id="accuracyRating">0%</h4>
+              <p>AI Accuracy</p>
+            </div>
+          </div>
+
+          <div class="profile-settings">
+            <h3>Settings</h3>
+            <div class="setting-item">
+              <label class="switch">
+                <input type="checkbox" id="darkModeToggle" />
+                <span class="slider"></span>
+              </label>
+              <span>Dark Mode</span>
+            </div>
+            <div class="setting-item">
+              <label class="switch">
+                <input type="checkbox" id="notificationsToggle" checked />
+                <span class="slider"></span>
+              </label>
+              <span>Notifications</span>
+            </div>
+            <div class="setting-item">
+              <label class="switch">
+                <input type="checkbox" id="aiSuggestionsToggle" checked />
+                <span class="slider"></span>
+              </label>
+              <span>AI Suggestions</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+      <div class="spinner"></div>
+      <p id="loadingText">Analyzing with AI...</p>
+    </div>
+
+    <!-- Meal Save Modal -->
+    <div id="mealSaveModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Save Meal</h3>
+          <button class="modal-close" id="closeMealModal">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="mealType">Meal Type</label>
+            <select id="mealType">
+              <option value="breakfast">Breakfast</option>
+              <option value="lunch">Lunch</option>
+              <option value="dinner">Dinner</option>
+              <option value="snack">Snack</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="mealTime">Time</label>
+            <input type="time" id="mealTime" />
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-secondary" id="cancelSave">Cancel</button>
+            <button class="btn btn-primary" id="confirmSave">Save Meal</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Load translations first -->
+    <script src="languages/translations.js"></script>
+
+    <!-- Debug language system -->
+    <script>
+      console.log("🌍 Language system check...");
+      if (window.languageManager) {
+        console.log("✅ Language Manager loaded");
+        console.log("Available languages:", Object.keys(window.translations));
+      } else {
+        console.log("❌ Language Manager not loaded");
+      }
+    </script>
+
+    <!-- Main application script -->
+    <script src="cal-ai-script.js"></script>
+  </body>
+</html>

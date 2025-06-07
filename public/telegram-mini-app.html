@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FoodTracker AI Pro - Telegram Mini App</title>
+    <link rel="stylesheet" href="cal-ai-styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- Additional Telegram Mini App Styles -->
+    <style>
+      /* 📱 Telegram Mini App Specific Styles */
+      body {
+        --tg-theme-bg-color: var(--bg-primary);
+        --tg-theme-text-color: var(--text-primary);
+        --tg-theme-hint-color: var(--text-secondary);
+        --tg-theme-link-color: var(--primary-color);
+        --tg-theme-button-color: var(--primary-color);
+        --tg-theme-button-text-color: var(--text-inverse);
+      }
+
+      /* Hide elements not needed in Telegram */
+      .navbar {
+        display: none !important;
+      }
+      .auth-modal {
+        display: none !important;
+      }
+
+      /* Telegram Mini App Container */
+      .telegram-container {
+        padding: var(--spacing-md);
+        max-width: 100vw;
+        overflow-x: hidden;
+      }
+
+      /* Telegram Header */
+      .telegram-header {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        color: var(--text-inverse);
+        padding: var(--spacing-lg) var(--spacing-md);
+        border-radius: var(--border-radius);
+        margin-bottom: var(--spacing-lg);
+        text-align: center;
+        animation: slideDown var(--animation-normal) ease-out;
+      }
+
+      .telegram-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: var(--spacing-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-sm);
+      }
+
+      .telegram-header p {
+        opacity: 0.9;
+        font-size: 0.9rem;
+      }
+
+      /* User Info Card */
+      .user-info-card {
+        background: var(--bg-card);
+        border-radius: var(--border-radius);
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-md);
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+      }
+
+      .user-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: var(--text-inverse);
+        font-weight: bold;
+      }
+
+      .user-details h3 {
+        margin: 0;
+        color: var(--text-primary);
+        font-size: 1.1rem;
+      }
+
+      .user-details p {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+      }
+
+      /* Telegram Buttons */
+      .telegram-btn {
+        width: 100%;
+        padding: var(--spacing-md);
+        border: none;
+        border-radius: var(--border-radius);
+        background: var(--primary-color);
+        color: var(--text-inverse);
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all var(--animation-fast);
+        margin-bottom: var(--spacing-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-sm);
+      }
+
+      .telegram-btn:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .telegram-btn.secondary {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+      }
+
+      .telegram-btn.secondary:hover {
+        background: var(--bg-tertiary);
+        border-color: var(--primary-color);
+      }
+
+      /* Quick Actions Grid */
+      .quick-actions-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .quick-action-card {
+        background: var(--bg-card);
+        border-radius: var(--border-radius);
+        padding: var(--spacing-lg);
+        text-align: center;
+        border: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: all var(--animation-fast);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .quick-action-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--primary-color);
+      }
+
+      .quick-action-card i {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: var(--spacing-sm);
+        display: block;
+      }
+
+      .quick-action-card h4 {
+        margin: 0 0 var(--spacing-xs) 0;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+      }
+
+      .quick-action-card p {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+      }
+
+      /* Compact Stats */
+      .compact-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .compact-stat {
+        background: var(--bg-card);
+        border-radius: var(--border-radius);
+        padding: var(--spacing-md);
+        text-align: center;
+        border: 1px solid var(--border-color);
+      }
+
+      .compact-stat .value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        display: block;
+      }
+
+      .compact-stat .label {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        margin-top: var(--spacing-xs);
+      }
+
+      /* Language Selector for Telegram */
+      .telegram-language-selector {
+        background: var(--bg-card);
+        border-radius: var(--border-radius);
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+        border: 1px solid var(--border-color);
+      }
+
+      .telegram-language-selector h4 {
+        margin: 0 0 var(--spacing-md) 0;
+        color: var(--text-primary);
+        font-size: 1rem;
+      }
+
+      .language-options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+      }
+
+      .language-option {
+        padding: var(--spacing-sm);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        background: var(--bg-secondary);
+        cursor: pointer;
+        transition: all var(--animation-fast);
+        text-align: center;
+        font-size: 0.9rem;
+      }
+
+      .language-option:hover,
+      .language-option.active {
+        border-color: var(--primary-color);
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--primary-color);
+      }
+
+      /* Mobile optimizations */
+      @media (max-width: 480px) {
+        .telegram-container {
+          padding: var(--spacing-sm);
+        }
+
+        .compact-stats {
+          grid-template-columns: 1fr;
+        }
+
+        .quick-actions-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- 🎭 Enhanced Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+      <div class="loading-animation">
+        <div class="loading-logo">🧠</div>
+        <div class="loading-dots">
+          <div class="loading-dot"></div>
+          <div class="loading-dot"></div>
+          <div class="loading-dot"></div>
+        </div>
+        <div class="loading-text">FoodTracker AI Pro</div>
+        <div class="loading-subtitle">🚀 Connecting to Telegram...</div>
+      </div>
+    </div>
+
+    <!-- 📱 Telegram Mini App Container -->
+    <div id="telegramContainer" class="telegram-container hidden">
+      <!-- Header -->
+      <div class="telegram-header">
+        <h1>
+          <i class="fas fa-brain"></i>
+          <span data-i18n="title">FoodTracker AI Pro</span>
+        </h1>
+        <p data-i18n="welcomeMessage">
+          AI-powered nutrition tracking for Telegram
+        </p>
+      </div>
+
+      <!-- User Info Card -->
+      <div class="user-info-card">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar">👤</div>
+          <div class="user-details">
+            <h3 id="userName">Loading...</h3>
+            <p id="userStatus">Telegram User</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Language Selector -->
+      <div class="telegram-language-selector">
+        <h4 data-i18n="language">🌍 Language / Язык</h4>
+        <div class="language-options">
+          <div class="language-option active" data-lang="en">🇺🇸 English</div>
+          <div class="language-option" data-lang="ru">🇷🇺 Русский</div>
+          <div class="language-option" data-lang="de">🇩🇪 Deutsch</div>
+          <div class="language-option" data-lang="fr">🇫🇷 Français</div>
+        </div>
+      </div>
+
+      <!-- Today's Stats -->
+      <div class="compact-stats">
+        <div class="compact-stat">
+          <span class="value" id="todayCalories">0</span>
+          <div class="label" data-i18n="calories">Calories</div>
+        </div>
+        <div class="compact-stat">
+          <span class="value" id="todayMeals">0</span>
+          <div class="label" data-i18n="meals">Meals</div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions-grid">
+        <div class="quick-action-card" onclick="startCamera()">
+          <i class="fas fa-camera"></i>
+          <h4 data-i18n="takePhoto">Take Photo</h4>
+          <p data-i18n="analyzeFood">AI food analysis</p>
+        </div>
+        <div class="quick-action-card" onclick="showTextAnalysis()">
+          <i class="fas fa-pen"></i>
+          <h4 data-i18n="textInput">Text Input</h4>
+          <p data-i18n="describeFood">Describe your meal</p>
+        </div>
+        <div class="quick-action-card" onclick="scanBarcode()">
+          <i class="fas fa-barcode"></i>
+          <h4 data-i18n="scanBarcode">Scan Barcode</h4>
+          <p data-i18n="productInfo">Get product info</p>
+        </div>
+        <div class="quick-action-card" onclick="showHistory()">
+          <i class="fas fa-history"></i>
+          <h4 data-i18n="history">History</h4>
+          <p data-i18n="viewPast">View past meals</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <button class="telegram-btn" onclick="openFullApp()">
+        <i class="fas fa-external-link-alt"></i>
+        <span data-i18n="openFullApp">Open Full App</span>
+      </button>
+
+      <button class="telegram-btn secondary" onclick="shareApp()">
+        <i class="fas fa-share"></i>
+        <span data-i18n="shareApp">Share with Friends</span>
+      </button>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Load translations first -->
+    <script src="languages/translations.js"></script>
+
+    <!-- Telegram Mini App Script -->
+    <script>
+      // 🤖 Telegram Mini App Integration
+      class TelegramMiniApp {
+        constructor() {
+          this.tg = window.Telegram?.WebApp;
+          this.user = null;
+          this.init();
+        }
+
+        init() {
+          console.log("🤖 Initializing Telegram Mini App...");
+
+          // Initialize Telegram Web App
+          if (this.tg) {
+            this.tg.ready();
+            this.tg.expand();
+            this.setupTelegramIntegration();
+          } else {
+            console.warn(
+              "⚠️ Telegram Web App not available, running in browser mode"
+            );
+            this.setupBrowserMode();
+          }
+
+          // Initialize language system
+          this.initLanguageSystem();
+
+          // Setup event listeners
+          this.setupEventListeners();
+
+          // Hide loading screen
+          setTimeout(() => {
+            this.hideLoadingScreen();
+          }, 2000);
+        }
+
+        setupTelegramIntegration() {
+          console.log("✅ Telegram Web App detected");
+
+          // Get user info
+          this.user = this.tg.initDataUnsafe?.user;
+
+          if (this.user) {
+            document.getElementById("userName").textContent =
+              this.user.first_name +
+              (this.user.last_name ? " " + this.user.last_name : "");
+            document.getElementById("userStatus").textContent = `@${
+              this.user.username || "telegram_user"
+            }`;
+
+            // Set avatar
+            const avatar = document.getElementById("userAvatar");
+            avatar.textContent = this.user.first_name.charAt(0).toUpperCase();
+          }
+
+          // Set theme
+          this.applyTelegramTheme();
+
+          // Setup main button
+          this.tg.MainButton.setText("🚀 Start Tracking");
+          this.tg.MainButton.onClick(() => this.startTracking());
+          this.tg.MainButton.show();
+
+          // Send user data to server for registration
+          this.registerTelegramUser();
+        }
+
+        setupBrowserMode() {
+          console.log("🌐 Running in browser mode");
+          document.getElementById("userName").textContent = "Demo User";
+          document.getElementById("userStatus").textContent = "Browser Mode";
+        }
+
+        applyTelegramTheme() {
+          if (!this.tg) return;
+
+          const root = document.documentElement;
+
+          if (this.tg.colorScheme === "dark") {
+            root.setAttribute("data-theme", "dark");
+          }
+
+          // Apply Telegram theme colors if available
+          if (this.tg.themeParams) {
+            const theme = this.tg.themeParams;
+            if (theme.bg_color) {
+              root.style.setProperty("--bg-primary", theme.bg_color);
+            }
+            if (theme.text_color) {
+              root.style.setProperty("--text-primary", theme.text_color);
+            }
+            if (theme.button_color) {
+              root.style.setProperty("--primary-color", theme.button_color);
+            }
+          }
+        }
+
+        async registerTelegramUser() {
+          if (!this.user) return;
+
+          try {
+            const response = await fetch("/api/telegram-register", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                telegram_id: this.user.id,
+                first_name: this.user.first_name,
+                last_name: this.user.last_name,
+                username: this.user.username,
+                language_code: this.user.language_code || "en",
+              }),
+            });
+
+            const data = await response.json();
+            console.log("✅ User registered:", data);
+
+            if (data.token) {
+              localStorage.setItem("authToken", data.token);
+            }
+          } catch (error) {
+            console.error("❌ Registration failed:", error);
+          }
+        }
+
+        initLanguageSystem() {
+          if (window.languageManager) {
+            // Set language based on Telegram user language
+            const userLang = this.user?.language_code?.split("_")[0] || "en";
+            if (window.translations[userLang]) {
+              window.languageManager.setLanguage(userLang);
+              this.updateLanguageSelector(userLang);
+            }
+            window.languageManager.init();
+          }
+        }
+
+        updateLanguageSelector(lang) {
+          document.querySelectorAll(".language-option").forEach((option) => {
+            option.classList.remove("active");
+            if (option.dataset.lang === lang) {
+              option.classList.add("active");
+            }
+          });
+        }
+
+        setupEventListeners() {
+          // Language selection
+          document.querySelectorAll(".language-option").forEach((option) => {
+            option.addEventListener("click", (e) => {
+              const lang = e.target.dataset.lang;
+              if (window.languageManager) {
+                window.languageManager.setLanguage(lang);
+                this.updateLanguageSelector(lang);
+              }
+            });
+          });
+        }
+
+        hideLoadingScreen() {
+          const loadingScreen = document.getElementById("loadingScreen");
+          const container = document.getElementById("telegramContainer");
+
+          loadingScreen.classList.add("fade-out");
+          setTimeout(() => {
+            loadingScreen.style.display = "none";
+            container.classList.remove("hidden");
+            container.classList.add("fade-in");
+          }, 500);
+        }
+
+        startTracking() {
+          this.showToast("🚀 Tracking started!", "success");
+          if (this.tg) {
+            this.tg.MainButton.setText("📊 View Dashboard");
+          }
+        }
+
+        showToast(message, type = "success") {
+          const toast = document.createElement("div");
+          toast.className = `toast ${type}`;
+          toast.textContent = message;
+
+          document.getElementById("toastContainer").appendChild(toast);
+
+          setTimeout(() => {
+            toast.remove();
+          }, 3000);
+        }
+      }
+
+      // Global functions for buttons
+      window.startCamera = () => {
+        telegramApp.showToast("📸 Camera feature coming soon!", "info");
+      };
+
+      window.showTextAnalysis = () => {
+        telegramApp.showToast("✏️ Text analysis feature coming soon!", "info");
+      };
+
+      window.scanBarcode = () => {
+        telegramApp.showToast("📱 Barcode scanner coming soon!", "info");
+      };
+
+      window.showHistory = () => {
+        telegramApp.showToast("📚 History feature coming soon!", "info");
+      };
+
+      window.openFullApp = () => {
+        window.open("/cal-ai-clone.html", "_blank");
+      };
+
+      window.shareApp = () => {
+        if (telegramApp.tg) {
+          telegramApp.tg.switchInlineQuery(
+            "Check out this amazing AI nutrition tracker! 🧠🍎"
+          );
+        } else {
+          telegramApp.showToast(
+            "📤 Share feature available in Telegram!",
+            "info"
+          );
+        }
+      };
+
+      // Initialize app
+      const telegramApp = new TelegramMiniApp();
+    </script>
+  </body>
+</html>

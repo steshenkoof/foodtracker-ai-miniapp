@@ -1,0 +1,21 @@
+module.exports = {
+  testEnvironment: "node",
+  collectCoverage: true,
+  coverageDirectory: "coverage",
+  coverageReporters: ["text", "lcov", "html"],
+  collectCoverageFrom: [
+    "services/**/*.js",
+    "server*.js",
+    "!node_modules/**",
+    "!coverage/**",
+    "!tests/**",
+  ],
+  testMatch: ["**/tests/**/*.test.js"],
+  setupFilesAfterEnv: ["<rootDir>/tests/setup.js"],
+  testTimeout: 30000,
+  verbose: true,
+  forceExit: true,
+  clearMocks: true,
+  resetMocks: true,
+  restoreMocks: true,
+};
