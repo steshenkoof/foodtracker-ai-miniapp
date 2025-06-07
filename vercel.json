@@ -1,24 +1,40 @@
 {
   "version": 2,
-  "name": "foodtracker-ai-pro",
+  "public": true,
   "builds": [
     {
-      "src": "server-cal-ai.js",
-      "use": "@vercel/node"
+      "src": "docs/**/*",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/server-cal-ai.js"
+      "dest": "/docs/$1"
     }
   ],
-  "env": {
-    "NODE_ENV": "production"
-  },
   "functions": {
-    "server-cal-ai.js": {
-      "maxDuration": 30
+    "docs/index.html": {
+      "maxDuration": 10
     }
-  }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods", 
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
+    }
+  ]
 }
