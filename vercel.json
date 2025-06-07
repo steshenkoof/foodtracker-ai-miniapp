@@ -13,11 +13,6 @@
       "dest": "/docs/$1"
     }
   ],
-  "functions": {
-    "docs/index.html": {
-      "maxDuration": 10
-    }
-  },
   "headers": [
     {
       "source": "/(.*)",
@@ -27,7 +22,7 @@
           "value": "*"
         },
         {
-          "key": "Access-Control-Allow-Methods", 
+          "key": "Access-Control-Allow-Methods",
           "value": "GET, POST, PUT, DELETE, OPTIONS"
         },
         {

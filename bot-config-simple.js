@@ -1,8 +1,8 @@
 // 🚀 FoodTracker AI Pro - Simplified Bot Configuration (No API calls)
-// Only Mini App support with HTTPS from GitHub Pages
+// Only Mini App support with HTTPS from Vercel
 
 process.env.TELEGRAM_BOT_TOKEN = "7328877520:AAFk4QI5dXLGlVlk5tJIGVgQ1IYvEyL83D8";
-process.env.MINI_APP_URL = "https://steshenkoof.github.io/foodtracker-ai-miniapp/";
+process.env.MINI_APP_URL = "https://foodtracker-mini-app-v2.vercel.app";
 process.env.API_BASE_URL = ""; // No API calls - Mini App only
 process.env.NODE_ENV = "production";
 process.env.BOT_MODE = "simple"; // Flag to disable API calls
