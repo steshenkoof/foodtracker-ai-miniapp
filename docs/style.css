@@ -1,0 +1,237 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #333;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#app {
+  max-width: 400px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  min-height: 100vh;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+}
+
+.header {
+  background: linear-gradient(45deg, #4caf50, #45a049);
+  color: white;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+}
+
+.header h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.language-selector {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.lang-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.lang-btn:hover,
+.lang-btn.active {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(1.1);
+}
+
+.content {
+  padding: 20px;
+}
+
+.camera-section {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.camera-container {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto 20px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+#camera {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  background: #f0f0f0;
+}
+
+.btn-primary {
+  background: linear-gradient(45deg, #ff6b6b, #ff8e88);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+}
+
+.btn-secondary {
+  background: linear-gradient(45deg, #4ecdc4, #44a08d);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.results-section {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.food-name {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.nutrition-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.nutrition-item {
+  text-align: center;
+  background: rgba(76, 175, 80, 0.1);
+  border-radius: 10px;
+  padding: 15px;
+  border: 2px solid rgba(76, 175, 80, 0.2);
+}
+
+.nutrition-item .label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.nutrition-item .value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #4caf50;
+}
+
+.confidence {
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin-top: 10px;
+}
+
+.stats-section {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.stats-section h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.progress-item {
+  margin-bottom: 15px;
+}
+
+.progress-item label {
+  display: block;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4caf50, #45a049);
+  border-radius: 5px;
+  transition: width 1s ease;
+}
+
+/* Telegram Mini App specific styles */
+.tg-viewport {
+  height: 100vh;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  #app {
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .header {
+    border-radius: 0;
+  }
+}

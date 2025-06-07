@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FoodTracker AI Pro - Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <div class="header">
+        <h1>🧠 FoodTracker AI Pro</h1>
+        <div class="language-selector">
+          <button class="lang-btn" data-lang="en">🇺🇸</button>
+          <button class="lang-btn" data-lang="ru">🇷🇺</button>
+          <button class="lang-btn" data-lang="de">🇩🇪</button>
+          <button class="lang-btn" data-lang="fr">🇫🇷</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Camera Section -->
+        <div class="camera-section">
+          <div class="camera-container">
+            <video id="camera" autoplay playsinline></video>
+            <canvas id="canvas" hidden></canvas>
+          </div>
+          <button id="take-photo" class="btn-primary">📸 Analyze Food</button>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="results-section" hidden>
+          <h3>🍽️ Analysis Results</h3>
+          <div class="nutrition-card">
+            <div class="food-name" id="food-name">Pizza Margherita 🍕</div>
+            <div class="nutrition-grid">
+              <div class="nutrition-item">
+                <div class="label">Calories</div>
+                <div class="value" id="calories">485</div>
+              </div>
+              <div class="nutrition-item">
+                <div class="label">Protein</div>
+                <div class="value" id="protein">18g</div>
+              </div>
+              <div class="nutrition-item">
+                <div class="label">Carbs</div>
+                <div class="value" id="carbs">58g</div>
+              </div>
+              <div class="nutrition-item">
+                <div class="label">Fat</div>
+                <div class="value" id="fat">20g</div>
+              </div>
+            </div>
+            <div class="confidence">
+              Confidence: <span id="confidence">92%</span>
+            </div>
+          </div>
+          <button id="save-entry" class="btn-secondary">💾 Save Entry</button>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-section">
+          <h3>📊 Today's Progress</h3>
+          <div class="progress-bars">
+            <div class="progress-item">
+              <label>Calories: 1850/2000</label>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 92%"></div>
+              </div>
+            </div>
+            <div class="progress-item">
+              <label>Protein: 68/80g</label>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 85%"></div>
+              </div>
+            </div>
+            <div class="progress-item">
+              <label>Carbs: 156/200g</label>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 78%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
