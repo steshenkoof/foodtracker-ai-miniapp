@@ -318,9 +318,27 @@ function getMessage(userId, key, replacements = {}) {
 
 // Helper function to create bot keyboard (no Mini App)
 function createBotKeyboard(userId) {
+  const lang = getUserLanguage(userId);
+  const texts = {
+    en: "📱 Open FoodTracker App",
+    ru: "📱 Открыть FoodTracker",
+    de: "📱 FoodTracker öffnen",
+    fr: "📱 Ouvrir FoodTracker",
+  };
+
   return {
     reply_markup: {
       inline_keyboard: [
+        [
+          {
+            text: texts[lang] || texts.en,
+            web_app: {
+              url:
+                process.env.MINI_APP_URL ||
+                "https://steshenkoof.github.io/foodtracker-ai-miniapp/",
+            },
+          },
+        ],
         [
           {
             text: "📸 Analyze Photo",
@@ -370,6 +388,50 @@ function createLanguageKeyboard() {
   };
 }
 
+// Mini App keyboard with direct URL
+function createMiniAppKeyboard(userId) {
+  const lang = getUserLanguage(userId);
+  const texts = {
+    en: "📱 Open FoodTracker App",
+    ru: "📱 Открыть FoodTracker",
+    de: "📱 FoodTracker öffnen",
+    fr: "📱 Ouvrir FoodTracker",
+  };
+
+  return {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: texts[lang] || texts.en,
+            web_app: {
+              url:
+                process.env.MINI_APP_URL ||
+                "https://steshenkoof.github.io/foodtracker-ai-miniapp/",
+            },
+          },
+        ],
+        [
+          {
+            text: "📸 Analyze Photo",
+            callback_data: "send_photo",
+          },
+          {
+            text: "📊 My Stats",
+            callback_data: "stats",
+          },
+        ],
+        [
+          {
+            text: "🌍 Language",
+            callback_data: "language",
+          },
+        ],
+      ],
+    },
+  };
+}
+
 // 🚀 Start command
 bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
@@ -378,14 +440,16 @@ bot.onText(/\/start/, async (msg) => {
   console.log(`🚀 User ${userId} started the bot`);
 
   try {
-    // Register user with our API
-    await axios.post(`${API_BASE_URL}/api/telegram-register`, {
-      telegram_id: userId,
-      first_name: msg.from.first_name,
-      last_name: msg.from.last_name,
-      username: msg.from.username,
-      language_code: msg.from.language_code || "en",
-    });
+    // Register user with our API (only if not in simple mode)
+    if (process.env.BOT_MODE !== "simple" && API_BASE_URL) {
+      await axios.post(`${API_BASE_URL}/api/telegram-register`, {
+        telegram_id: userId,
+        first_name: msg.from.first_name,
+        last_name: msg.from.last_name,
+        username: msg.from.username,
+        language_code: msg.from.language_code || "en",
+      });
+    }
 
     // Set user language
     userLanguages.set(userId, msg.from.language_code?.slice(0, 2) || "en");
@@ -405,7 +469,7 @@ bot.onText(/\/help/, async (msg) => {
   const userId = msg.from.id;
 
   const helpMessage = getMessage(userId, "help");
-  await bot.sendMessage(chatId, helpMessage);
+  await bot.sendMessage(chatId, helpMessage, createMiniAppKeyboard(userId));
 });
 
 // 📊 Stats command
@@ -538,22 +602,30 @@ bot.on("photo", async (msg) => {
     // 🧠 Real AI analysis with our API
     let analysisResults;
 
-    try {
-      // Send photo to our AI analysis API
-      const response = await axios.post(`${API_BASE_URL}/api/analyze-photo`, {
-        image_url: photoUrl,
-        user_id: userId,
-      });
+    // Check if we should use API or go straight to smart detection
+    if (process.env.BOT_MODE !== "simple" && API_BASE_URL) {
+      try {
+        // Send photo to our AI analysis API
+        const response = await axios.post(`${API_BASE_URL}/api/analyze-photo`, {
+          image_url: photoUrl,
+          user_id: userId,
+        });
 
-      if (response.data.success) {
-        analysisResults = response.data.analysis;
-      } else {
-        throw new Error("AI analysis failed");
+        if (response.data.success) {
+          analysisResults = response.data.analysis;
+        } else {
+          throw new Error("AI analysis failed");
+        }
+      } catch (error) {
+        console.log("🔄 AI API failed, using smart detection...");
+
+        // Smart fallback based on image analysis
+        const smartResults = await analyzePhotoSmart(photoUrl);
+        analysisResults = smartResults;
       }
-    } catch (error) {
-      console.log("🔄 AI API failed, using smart detection...");
-
-      // Smart fallback based on image analysis
+    } else {
+      // Simple mode: use smart detection directly
+      console.log("🤖 Simple mode: using smart detection...");
       const smartResults = await analyzePhotoSmart(photoUrl);
       analysisResults = smartResults;
     }
